@@ -96,8 +96,16 @@ function sortTable(columnIndex, dataType) {
 
 // Function to fetch data from API and populate table
 async function fetchData() {
-  try {
-    const response = await fetch("https://analytics.testnet.voi.nodly.io/v0/consensus/accounts/all");
+    let nodeAPI;
+    if (hour24) {
+        nodeAPI = "https://analytics.testnet.voi.nodly.io/v0/consensus/accounts/24";
+        
+    } else {
+        nodeAPI = "https://analytics.testnet.voi.nodly.io/v0/consensus/accounts/all";
+    }
+  
+try {
+    const response = await fetch(nodeAPI);
     const data = await response.json();
 
     const tableHead = document.getElementById("tableHead");
