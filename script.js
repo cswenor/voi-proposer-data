@@ -1,6 +1,53 @@
 let lastSortedColumn = null;
 let isAscending = true;
 
+function updateSenderCell(senderKey, replacementValue) {
+    const table = document.getElementById("dataTable");
+    const rows = Array.from(table.rows).slice(1); // Skip the header row
+  
+    rows.forEach(row => {
+      const senderCell = row.cells[0]; // Assuming "Sender" is the first column
+      if (senderCell.textContent === senderKey) {
+        senderCell.textContent = replacementValue;
+      }
+    });
+  }
+
+function getNFD(data) {
+    let addressChunks = [];
+    let chunkSize = 20;
+  
+    for (let i = 0; i < data.length; i += chunkSize) {
+      addressChunks.push(data.slice(i, i + chunkSize));
+    }
+  
+    addressChunks.forEach((addressChunk, index) => {
+      let url = "https://api.nf.domains/nfd/lookup?";
+      let params = new URLSearchParams();
+  
+      addressChunk.forEach(address => {
+        params.append("address", address[0]); // Assuming the first element is the address
+      });
+  
+      params.append("view", "tiny");
+      params.append("allowUnverified", "true");
+      
+      url += params.toString();
+  
+      fetch(url)
+        .then(response => response.json())
+        .then(additionalData => {
+            Object.entries(additionalData).forEach(([key, value]) => {
+                const replacementValue = value.name; // Assuming the key for replacement is 'name'
+                updateSenderCell(key, replacementValue);
+              });
+          // Handle the additional data here
+          console.log(`Additional Data for Batch ${index + 1}:`, additionalData);
+        })
+        .catch(error => console.error("Error fetching additional data:", error));
+    });
+  }
+  
 // Function to sort the table
 function sortTable(columnIndex, dataType) {
   const table = document.getElementById("dataTable");
@@ -76,6 +123,8 @@ async function fetchData() {
       });
       tableBody.appendChild(tr);
     });
+
+    getNFD(data.data);
 
     document.getElementById('proposer-count').textContent = data.data.length;
 
