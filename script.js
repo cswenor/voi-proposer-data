@@ -1,5 +1,6 @@
 let lastSortedColumn = null;
 let isAscending = true;
+let NFDs = [];
 
 function updateSenderCell(senderKey, replacementValue) {
     const table = document.getElementById("dataTable");
@@ -16,6 +17,7 @@ function updateSenderCell(senderKey, replacementValue) {
 function getNFD(data) {
     let addressChunks = [];
     let chunkSize = 20;
+
   
     for (let i = 0; i < data.length; i += chunkSize) {
       addressChunks.push(data.slice(i, i + chunkSize));
@@ -40,6 +42,7 @@ function getNFD(data) {
             Object.entries(additionalData).forEach(([key, value]) => {
                 const replacementValue = value.name;  // Assuming you get the name from the value
                 updateSenderCell(key, replacementValue);
+                NFDs.push(value.name);
             });
             // ... Your existing code ...
         })
@@ -92,6 +95,10 @@ function sortTable(columnIndex, dataType) {
     }
   });
 }
+
+function randomItemFromArry(items) {
+    return items[Math.floor(Math.random()*items.length)];
+};
 
 // Function to fetch data from API and populate table
 async function fetchData() {
