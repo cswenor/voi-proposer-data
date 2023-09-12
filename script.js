@@ -19,7 +19,7 @@ function sortTable(columnIndex, dataType) {
     let cellB = b.cells[columnIndex].textContent;
 
     // Convert to the appropriate data type for comparison
-    if (dataType === 'UInt64' || dataType === 'Float64') {
+    if (dataType === 'UInt64' || dataType === 'Nullable(Float64)') {
       cellA = parseFloat(cellA);
       cellB = parseFloat(cellB);
     } else if (dataType.includes("DateTime64")) {
