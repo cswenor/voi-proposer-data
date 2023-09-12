@@ -9,7 +9,7 @@ function updateSenderCell(senderKey, replacementValue) {
     rows.forEach(row => {
         const senderCell = row.cells[0]; // Assuming "Sender" is the first column
         if (senderCell.textContent === senderKey) {
-            senderCell.innerHTML = `<a href="https://app.dappflow.org/explorer/account/${senderKey}/transactions" class="replacement">${replacementValue}</a> 
+            senderCell.innerHTML = `<a href="https://voitest-explorer.k1-fi.a-wallet.net/explorer/account/${senderKey}/transactions" class="replacement">${replacementValue}</a> 
                                     <span class="hidden-address">${senderKey}</span>`;
         }
     });
@@ -132,7 +132,7 @@ async function fetchData() {
             dataRow.forEach((cellData, index) => {
                 const td = document.createElement("td");
                 if (index === 0) { // Assuming "Sender" is the first column
-                    td.innerHTML = `<a href="https://app.dappflow.org/explorer/account/${cellData}/transactions">${cellData}</a>`;
+                    td.innerHTML = `<a href="https://voitest-explorer.k1-fi.a-wallet.net/explorer/account/${cellData}/transactions">${cellData}</a>`;
                 } else {
                     td.textContent = cellData;
                 }
