@@ -61,6 +61,7 @@ body {
     border-spacing: 0;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     margin-top: 1em;
+    position: relative;
   }
   
   th, td {
@@ -73,6 +74,9 @@ body {
     background-color: #dcd2f2;
     color: #4a3f89;
     cursor: pointer;
+    position: sticky;
+    top: 0;
+    z-index: 2;
   }
   
   td a, .replacement {
