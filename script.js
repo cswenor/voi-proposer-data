@@ -4,15 +4,15 @@ let isAscending = true;
 function updateSenderCell(senderKey, replacementValue) {
     const table = document.getElementById("dataTable");
     const rows = Array.from(table.rows).slice(1); // Skip the header row
-  
-    rows.forEach(row => {
-      const senderCell = row.cells[0]; // Assuming "Sender" is the first column
-      if (senderCell.textContent === senderKey) {
-        senderCell.innerHTML = replacementValue;
-      }
-    });
-  }
 
+    rows.forEach(row => {
+        const senderCell = row.cells[0]; // Assuming "Sender" is the first column
+        if (senderCell.textContent === senderKey) {
+            senderCell.innerHTML = `<a href="https://app.dappflow.org/explorer/account/${senderKey}/transactions" class="replacement">${replacementValue}</a> 
+                                    <span class="hidden-address">${senderKey}</span>`;
+        }
+    });
+}
 function getNFD(data) {
     let addressChunks = [];
     let chunkSize = 20;
@@ -38,11 +38,10 @@ function getNFD(data) {
         .then(response => response.json())
         .then(additionalData => {
             Object.entries(additionalData).forEach(([key, value]) => {
-                const replacementValue = `<span class="hidden-address">${key}</span><span class="replacement">${value.name}</span>`;
+                const replacementValue = value.name;  // Assuming you get the name from the value
                 updateSenderCell(key, replacementValue);
-              });
-          // Handle the additional data here
-          console.log(`Additional Data for Batch ${index + 1}:`, additionalData);
+            });
+            // ... Your existing code ...
         })
         .catch(error => console.error("Error fetching additional data:", error));
     });
@@ -99,46 +98,49 @@ async function fetchData() {
     let nodeAPI;
     if (hour24) {
         nodeAPI = "https://analytics.testnet.voi.nodly.io/v0/consensus/accounts/24";
-        
     } else {
         nodeAPI = "https://analytics.testnet.voi.nodly.io/v0/consensus/accounts/all";
     }
   
-try {
-    const response = await fetch(nodeAPI);
-    const data = await response.json();
+    try {
+        const response = await fetch(nodeAPI);
+        const data = await response.json();
 
-    const tableHead = document.getElementById("tableHead");
-    const tableBody = document.getElementById("tableBody");
+        const tableHead = document.getElementById("tableHead");
+        const tableBody = document.getElementById("tableBody");
 
-    // Create table headers
-    const headerRow = document.createElement("tr");
-    data.meta.forEach((metaItem, index) => {
-      const th = document.createElement("th");
-      th.textContent = metaItem.name;
-      th.addEventListener("click", () => sortTable(index, metaItem.type));
-      headerRow.appendChild(th);
-    });
-    tableHead.appendChild(headerRow);
+        // Create table headers
+        const headerRow = document.createElement("tr");
+        data.meta.forEach((metaItem, index) => {
+            const th = document.createElement("th");
+            th.textContent = metaItem.name;
+            th.addEventListener("click", () => sortTable(index, metaItem.type));
+            headerRow.appendChild(th);
+        });
+        tableHead.appendChild(headerRow);
 
-    // Create table rows
-    data.data.forEach((dataRow) => {
-      const tr = document.createElement("tr");
-      dataRow.forEach((cellData) => {
-        const td = document.createElement("td");
-        td.textContent = cellData;
-        tr.appendChild(td);
-      });
-      tableBody.appendChild(tr);
-    });
+        // Create table rows
+        data.data.forEach((dataRow) => {
+            const tr = document.createElement("tr");
+            dataRow.forEach((cellData, index) => {
+                const td = document.createElement("td");
+                if (index === 0) { // Assuming "Sender" is the first column
+                    td.innerHTML = `<a href="https://app.dappflow.org/explorer/account/${cellData}/transactions">${cellData}</a>`;
+                } else {
+                    td.textContent = cellData;
+                }
+                tr.appendChild(td);
+            });
+            tableBody.appendChild(tr);
+        });
 
-    getNFD(data.data);
+        getNFD(data.data);
 
-    document.getElementById('proposer-count').textContent = data.data.length;
+        document.getElementById('proposer-count').textContent = data.data.length;
 
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
+    } catch (error) {
+        console.error("An error occurred:", error);
+    }
 }
 
 // Invoke fetchData when the page loads
