@@ -8,7 +8,7 @@ function updateSenderCell(senderKey, replacementValue) {
     rows.forEach(row => {
       const senderCell = row.cells[0]; // Assuming "Sender" is the first column
       if (senderCell.textContent === senderKey) {
-        senderCell.textContent = replacementValue;
+        senderCell.innerHTML = replacementValue;
       }
     });
   }
@@ -38,7 +38,7 @@ function getNFD(data) {
         .then(response => response.json())
         .then(additionalData => {
             Object.entries(additionalData).forEach(([key, value]) => {
-                const replacementValue = value.name; // Assuming the key for replacement is 'name'
+                const replacementValue = `<span class="hidden-address">${key}</span><span class="replacement">${value.name}</span>`;
                 updateSenderCell(key, replacementValue);
               });
           // Handle the additional data here
