@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Network Nodes</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="24.html">24 Hour</a></li>
+            <li><a href="health.html">Node Health</a></li>
+        </ul>
+      </nav>
+  <h1>Network Node Information</h1>
+  <div class="container">
+  <div id="endpoint-links">
+    <a href="#" data-endpoint="/v0/network/nodes/hour">Hour</a> |
+    <a href="#" data-endpoint="/v0/network/nodes/day">Day</a> |
+    <a href="#" data-endpoint="/v0/network/nodes/week">Week</a> |
+    <a href="#" data-endpoint="/v0/network/nodes/month">Month</a>
+  </div>
+
+  <table id="data-table">
+    <thead>
+      <tr id="table-header">
+        <!-- Headers will be populated by JS -->
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <!-- Rows will be populated by JS -->
+    </tbody>
+  </table>
+
+  <script src="health.js"></script> <!-- Make sure to include your new JavaScript code here -->
+</div>
+</body>
+</html>
