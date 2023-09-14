@@ -1,6 +1,26 @@
 let lastSortedColumn = -1;
 let isAscending = true;
 
+const endpointLinks = document.querySelectorAll('#endpoint-links a');
+endpointLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const newEndpoint = e.target.getAttribute('data-endpoint');
+    
+    // Remove 'active' class from all links
+    endpointLinks.forEach(l => l.classList.remove('active'));
+
+    // Add 'active' class to clicked link
+    e.target.classList.add('active');
+
+    // Fetch new data and update table
+    fetchData(newEndpoint);
+  });
+});
+
+// When you load data, you could add the 'active' class to the default link you start with
+document.querySelector('[data-endpoint="/v0/network/nodes/day"]').classList.add('active');
+
 function fetchData(endpoint) {
   const fullEndpoint = `https://analytics.testnet.voi.nodly.io${endpoint}`;
   

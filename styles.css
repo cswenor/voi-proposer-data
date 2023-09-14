@@ -180,5 +180,39 @@ td {
   .note a:hover {
     text-decoration: none;
   }
+
+/* Styles for endpoint link list */
+#endpoint-links {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1em;
+  font-size: 1.2em;
+}
+
+.endpoint-link {
+  margin: 0 15px;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #6c63ff;
+  border: 1px solid transparent;
+  border-radius: 5px;
+}
+
+/* Styles for active endpoint link */
+.endpoint-link.active {
+  background-color: #6c63ff;
+  color: white;
+  border: 1px solid #6c63ff;
+}
+
+/* Highlight the endpoint being hit */
+.endpoint-highlight {
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #ff6c6c;
+}
+
+  
   
   
