@@ -1,16 +1,22 @@
+let currentEndpoint = null;  
 let lastSortedColumn = -1;
 let isAscending = true;
 
+// Initialize table with default endpoint
+fetchData('/v0/network/nodes/day');
+
+// Event handler to switch endpoints
 const endpointLinks = document.querySelectorAll('#endpoint-links a');
 endpointLinks.forEach(link => {
   link.addEventListener('click', (e) => {
     e.preventDefault();
     const newEndpoint = e.target.getAttribute('data-endpoint');
     
-    // Remove 'active' class from all links
-    endpointLinks.forEach(l => l.classList.remove('active'));
+    if (newEndpoint === currentEndpoint) return;  // Skip if already active
+    currentEndpoint = newEndpoint;
 
-    // Add 'active' class to clicked link
+    // Update 'active' class on links
+    endpointLinks.forEach(l => l.classList.remove('active'));
     e.target.classList.add('active');
 
     // Fetch new data and update table
@@ -104,18 +110,3 @@ function sortTable(columnIndex, dataType) {
   });
 }
 
-// Endpoint switcher
-document.addEventListener('DOMContentLoaded', () => {
-  // Initialize table with default endpoint
-  fetchData('/v0/network/nodes/day');
-
-  // Listen for link clicks to switch endpoints
-  const links = document.querySelectorAll('#endpoint-links a');
-  links.forEach(link => {
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      const endpoint = event.target.getAttribute('data-endpoint');
-      fetchData(endpoint);
-    });
-  });
-});
