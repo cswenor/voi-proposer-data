@@ -43,6 +43,7 @@ function fetchData(endpoint) {
       .then(response => response.json())
       .then(data => {
         tableData = data.data; // Store the data in a variable
+        document.getElementById("node-total-count").textContent = tableData.length;
         updateTable();
         
         // Update header cells

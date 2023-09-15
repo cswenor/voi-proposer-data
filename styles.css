@@ -236,6 +236,15 @@ td {
   color: #fff;
 }
 
-  
+#node-total {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+  color: #4a3f89; /* Match existing color scheme */
+  background-color: #dcd2f2; /* Match existing background */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
   
   
