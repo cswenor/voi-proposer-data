@@ -95,7 +95,7 @@ function fetchData(endpoint) {
       let cellB = b[columnIndex];
   
       // Convert to the appropriate data type for comparison
-      if (dataType === 'UInt64' || dataType === 'Nullable(Float64)') {
+      if (dataType.includes('Int64') || dataType.includes('Float64')) {
         cellA = parseFloat(cellA);
         cellB = parseFloat(cellB);
       } else if (dataType.includes("DateTime64")) {
