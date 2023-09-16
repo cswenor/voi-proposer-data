@@ -103,6 +103,8 @@ function randomItemFromArry(items) {
 // Function to fetch data from API and populate table
 async function fetchData() {
     let nodeAPI;
+    let totalBlocksProposed = 0;
+
     if (hour24) {
         nodeAPI = "https://analytics.testnet.voi.nodly.io/v0/consensus/accounts/24";
     } else {
@@ -136,6 +138,10 @@ async function fetchData() {
                 } else {
                     td.textContent = cellData;
                 }
+                // Assuming "BlocksProposed" is the 2nd column (index 1)
+                if (index === 6) {
+                  totalBlocksProposed += parseInt(cellData, 10);  // Add to the total
+                }
                 tr.appendChild(td);
             });
             tableBody.appendChild(tr);
@@ -144,6 +150,8 @@ async function fetchData() {
         getNFD(data.data);
 
         document.getElementById('proposer-count').textContent = data.data.length;
+        document.getElementById('block-count').textContent = totalBlocksProposed;
+
 
     } catch (error) {
         console.error("An error occurred:", error);
