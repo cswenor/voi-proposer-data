@@ -1,8 +1,11 @@
-let currentEndpoint = null;  
+let currentEndpoint = null;
 let lastSortedColumn = -1;
 let isAscending = true;
 let tableData = [];
 let isLoading = false;
+let NFDs = [];
+let aggregatedNFDs = [];
+
 
 // Initialize table with default endpoint
 fetchData('/v0/network/nodes/day');
@@ -33,7 +36,63 @@ endpointLinks.forEach(link => {
   });
 });
 
-function fetchData(endpoint) {
+function batchUpdateSenderCells(aggregatedNFDs) {
+  const table = document.getElementById("data-table");
+  const rows = Array.from(table.rows).slice(1); // Skip the header row
+
+  rows.forEach(row => {
+    const senderCell = row.cells[11]; // Assuming "Sender" is the column at index 11
+    let newHTML = senderCell.innerHTML;
+    
+    aggregatedNFDs.forEach(({ key, replacementValue }) => {
+      if (newHTML.includes(key)) {
+        newHTML = newHTML.replace(
+          key,
+          `<a href="https://voitest-explorer.k1-fi.a-wallet.net/explorer/account/${key}/transactions" class="replacement">${replacementValue}</a> <span class="hidden-address">${key}</span>`
+        );
+      }
+    });
+    
+    senderCell.innerHTML = newHTML;
+  });
+}
+
+async function getNFD(data) {
+  let addressChunks = [];
+  let chunkSize = 20;
+
+  for (let i = 0; i < data.length; i += chunkSize) {
+    addressChunks.push(data.slice(i, i + chunkSize));
+  }
+
+  const allFetches = addressChunks.map((addressChunk, index) => {
+    let url = "https://api.nf.domains/nfd/lookup?";
+    let params = new URLSearchParams();
+
+    addressChunk.forEach(address => {
+      params.append("address", address);
+    });
+
+    params.append("view", "tiny");
+    params.append("allowUnverified", "true");
+    
+    url += params.toString();
+
+    return fetch(url)
+      .then(response => response.json())
+      .then(additionalData => {
+        Object.entries(additionalData).forEach(([key, value]) => {
+          const replacementValue = value.name;
+          aggregatedNFDs.push({ key, replacementValue });
+        });
+      })
+      .catch(error => console.error("Error fetching additional data:", error));
+  });
+
+  await Promise.all(allFetches);
+}
+
+async function fetchData(endpoint) {
     if (isLoading) return; // prevent multiple simultaneous fetch operations
     isLoading = true;
     toggleLoading(true);
@@ -41,21 +100,36 @@ function fetchData(endpoint) {
     const fullEndpoint = `https://analytics.testnet.voi.nodly.io${endpoint}`;
     fetch(fullEndpoint)
       .then(response => response.json())
-      .then(data => {
-        tableData = data.data; // Store the data in a variable
-        document.getElementById("node-total-count").textContent = tableData.length;
-        updateTable();
-        
-        // Update header cells
-        const headerRow = document.getElementById('table-header');
-        headerRow.innerHTML = ''; // Clear existing headers
-        data.meta.forEach((col, index) => {
-          const th = document.createElement('th');
-          th.textContent = col.name;
-          th.setAttribute('data-type', col.type);
-          headerRow.appendChild(th);
-        });
-      })
+      .then(async data => {
+        tableData = data.data;
+      let addressesColumnIndex = null;
+      for (let i = 0; i < data.meta.length; i++) {
+        if (data.meta[i].name === "addresses") {
+          addressesColumnIndex = i;
+          break;
+        }
+      }
+      
+      updateTable();
+
+      if (addressesColumnIndex !== null) {
+        const allAddresses = tableData.map(row => row[addressesColumnIndex]);
+        aggregatedNFDs = [];
+        await (allAddresses.every(Array.isArray) ? getNFD(allAddresses.flat()) : getNFD(allAddresses));
+        batchUpdateSenderCells(aggregatedNFDs);  // Call the batch update function here
+      }
+
+      document.getElementById("node-total-count").textContent = tableData.length;
+
+      const headerRow = document.getElementById('table-header');
+      headerRow.innerHTML = '';
+      data.meta.forEach((col, index) => {
+        const th = document.createElement('th');
+        th.textContent = col.name;
+        th.setAttribute('data-type', col.type);
+        headerRow.appendChild(th);
+      });
+    })
       .catch(error => console.error('Error fetching data:', error))
       .finally(() => {
         isLoading = false;
@@ -65,16 +139,24 @@ function fetchData(endpoint) {
   
   function updateTable() {
     const tableBody = document.getElementById('table-body');
-    // Clear existing table data
     while (tableBody.firstChild) {
       tableBody.removeChild(tableBody.firstChild);
     }
     
     tableData.forEach(row => {
       const tr = document.createElement('tr');
-      row.forEach(cell => {
+      row.forEach((cell, index) => {
         const td = document.createElement('td');
-        td.textContent = cell;
+        if (Array.isArray(cell)) {
+          td.innerHTML = cell.map(addr => `<span>${addr}</span>`).join(', ');
+  
+          // Add a class if this cell has multiple addresses
+          if (cell.length > 1) {
+            td.classList.add('multiple-addresses');  // Add your class name here
+          }
+        } else {
+          td.textContent = cell;
+        }
         tr.appendChild(td);
       });
       tableBody.appendChild(tr);
