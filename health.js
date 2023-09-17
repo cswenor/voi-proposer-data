@@ -40,6 +40,16 @@ function batchUpdateSenderCells(aggregatedNFDs) {
   const table = document.getElementById("data-table");
   const rows = Array.from(table.rows).slice(1); // Skip the header row
 
+  // Remove duplicates
+  const map = new Map();
+  aggregatedNFDs.forEach(item => {
+    // Use the 'key' property of each object as a unique identifier
+    if(!map.has(item.key)) {
+      map.set(item.key, item);
+    }
+  });
+  aggregatedNFDs = Array.from(map.values());
+
   rows.forEach(row => {
     const senderCell = row.cells[11]; // Assuming "Sender" is the column at index 11
     let newHTML = senderCell.innerHTML;
