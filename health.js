@@ -171,6 +171,7 @@ async function fetchData(endpoint) {
       });
       tableBody.appendChild(tr);
     });
+    batchUpdateSenderCells(aggregatedNFDs);
   }
 
   function sortTable(columnIndex, dataType) {
