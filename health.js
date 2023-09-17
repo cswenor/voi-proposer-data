@@ -224,3 +224,6 @@ function toggleLoading(isLoading) {
   }
 }
 
+function randomItemFromArry(items) {
+  return items[Math.floor(Math.random()*items.length)];
+};
