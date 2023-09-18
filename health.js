@@ -224,6 +224,16 @@ function toggleLoading(isLoading) {
   }
 }
 
-function randomItemFromArry(items) {
+function randomItemFromArray(items) {
   return items[Math.floor(Math.random()*items.length)];
 };
+
+function pickWinner(table) {
+  let goodPotential = [];
+  table.forEach(row => {
+    if (row[2] > 2) {
+      goodPotential.push(row);
+    };
+  })
+  return randomItemFromArray(goodPotential);
+}
