@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorand Accounts</title>
+
+<script src="https://cdn.jsdelivr.net/npm/algosdk@v2.6.0/dist/browser/algosdk.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
+</head>
+<body>
+    <h2 id="playerCount"></h2>
+    <table id="accountsTable" class="display">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Address</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script src="leader.js"></script>
+</body>
+</html>
