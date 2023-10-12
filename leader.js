@@ -4,6 +4,39 @@ const indexerPort = "";
 
 const indexerClient = new algosdk.Indexer(indexerToken, indexerServer, indexerPort);
 
+async function getNFD(accounts) {
+    let chunkSize = 20;
+
+    for (let i = 0; i < accounts.length; i += chunkSize) {
+        let addressChunk = accounts.slice(i, i + chunkSize);
+        let url = "https://api.nf.domains/nfd/lookup?";
+        let params = new URLSearchParams();
+
+        addressChunk.forEach(account => {
+            params.append("address", account.address);
+        });
+
+        params.append("view", "tiny");
+        params.append("allowUnverified", "true");
+
+        url += params.toString();
+
+        try {
+            const response = await fetch(url);
+            const additionalData = await response.json();
+
+            addressChunk.forEach(account => {
+                if (additionalData[account.address]) {
+                    account.address = additionalData[account.address].name;
+                }
+            });
+        } catch (error) {
+            console.error("Error fetching additional data:", error);
+        }
+    }
+}
+
+
 async function getBlacklistFromApi() {
     const response = await fetch('https://analytics.testnet.voi.nodly.io/v0/consensus/ballast');
     const data = await response.json();
@@ -70,6 +103,8 @@ async function displayAccounts() {
 
         const accountsTableBody = document.getElementById('accountsTable').getElementsByTagName('tbody')[0];
         const playerCountElement = document.getElementById('playerCount');
+
+        await getNFD(filteredAccounts);
 
         // Updated to handle the flat array of accounts
         if (filteredAccounts && filteredAccounts.length > 0) {
